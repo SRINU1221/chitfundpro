@@ -49,14 +49,17 @@ const createChit = asyncHandler(async (req, res) => {
 // @route   GET /api/chits
 // @access  Private
 const getChits = asyncHandler(async (req, res) => {
-    // Return chits where user is either organizer OR a member
-    const chits = await Chit.find({
-        $or: [
-            { organizer: req.user.id },           // Chits I created as organizer
-            { 'members.user': req.user.id }       // Chits I'm a member of
-        ]
-    });
-    res.status(200).json(chits);
+    // Check if user has created any chits (is an organizer)
+    const organizedChits = await Chit.find({ organizer: req.user.id });
+
+    if (organizedChits.length > 0) {
+        // User is an organizer - show only chits they created
+        return res.status(200).json(organizedChits);
+    }
+
+    // User is a participant - show all chits (they can join any)
+    const allChits = await Chit.find();
+    res.status(200).json(allChits);
 });
 
 // @desc    Get single chit
