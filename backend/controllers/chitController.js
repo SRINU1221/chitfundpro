@@ -49,7 +49,13 @@ const createChit = asyncHandler(async (req, res) => {
 // @route   GET /api/chits
 // @access  Private
 const getChits = asyncHandler(async (req, res) => {
-    const chits = await Chit.find();
+    // Return chits where user is either organizer OR a member
+    const chits = await Chit.find({
+        $or: [
+            { organizer: req.user.id },           // Chits I created as organizer
+            { 'members.user': req.user.id }       // Chits I'm a member of
+        ]
+    });
     res.status(200).json(chits);
 });
 
