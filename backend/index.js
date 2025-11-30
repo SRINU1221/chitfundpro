@@ -22,6 +22,10 @@ app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/lifts', require('./routes/liftRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 
+app.get('/', (req, res) => {
+    res.status(200).send('Chit Fund API is running');
+});
+
 app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
